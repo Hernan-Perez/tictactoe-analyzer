@@ -14,6 +14,8 @@ class TicTacToeWindow:
         self.btns = []
         self.btn_toggle = None
         self.lbl_res = None
+        self.btn_reset = None
+        self.btn_exit = None
         self.img_empty = self.img_cross = self.img_circle = None
 
     def toggle_action(self):
@@ -33,6 +35,13 @@ class TicTacToeWindow:
 
         if self.analysis_mode:
             prob = self.ttt.get_move_probability(self.player, x, y)
+            txt = "Probabilities:\nWin: " + "{:.2f}".format(prob[0] * 100) + " % \n"
+            txt += "Lose: " + "{:.2f}".format(prob[2] * 100) + " % \n"
+            txt += "Tie: " + "{:.2f}".format(prob[1] * 100) + " %"
+            self.lbl_res.config(text=txt)
+            # print(prob)
+            # print(len(prob))
+            # print(self.ttt.debug_print())
         else:
             # player's action
             self.ttt.play_move(self.player, x, y)
@@ -55,6 +64,11 @@ class TicTacToeWindow:
                     txt = "You lost."
 
                 tkinter.messagebox.showinfo("Game ended", txt)
+
+    def reset_action(self):
+        self.ttt.reset()
+        for e in self.btns:
+            e.config(image=self.img_empty)
 
     def show_window(self):
         self.win = tk.Tk()
@@ -94,8 +108,11 @@ class TicTacToeWindow:
         self.lbl_res = tk.Label(self.win, text="", width=50, height=5)
         self.lbl_res.grid(row=2, column=4, columnspan=2, padx=(0, 0), pady=0)
 
-        btn_exit = tk.Button(self.win, text="Exit", width=10, height=2, command=exit)
-        btn_exit.grid(row=4, column=1, columnspan=1, padx=5, pady=25)
+        self.btn_reset = tk.Button(self.win, text="Reset", width=10, height=2, command=self.reset_action)
+        self.btn_reset.grid(row=4, column=1, columnspan=1, padx=5, pady=25)
+
+        self.btn_exit = tk.Button(self.win, text="Exit", width=10, height=2, command=exit)
+        self.btn_exit.grid(row=4, column=2, columnspan=1, padx=5, pady=25)
 
         self.win.mainloop()
 
