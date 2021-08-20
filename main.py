@@ -39,9 +39,6 @@ class TicTacToeWindow:
             txt += "Lose: " + "{:.2f}".format(prob[2] * 100) + " % \n"
             txt += "Tie: " + "{:.2f}".format(prob[1] * 100) + " %"
             self.lbl_res.config(text=txt)
-            # print(prob)
-            # print(len(prob))
-            # print(self.ttt.debug_print())
         else:
             # player's action
             self.ttt.play_move(self.player, x, y)

@@ -13,7 +13,7 @@ class TicTacToe:
         self._x_turn = True
         self._winner = -1  # -1 -> not ended, 0 -> tie, 1 -> player, 2 -> computer
 
-    # AI will make the best move in hard mode and a random move otherwise. returns [x, y]
+    # AI will make a random move otherwise. returns [x, y]
     def play_move_ai(self):
         if self._game_ended:
             return None
@@ -49,36 +49,7 @@ class TicTacToe:
         total = float(total)
         return [c[1]/total, c[0]/total, c[2]/total]
 
-    @staticmethod
-    def _hypotetical_moves(grid, player: int) -> list:
-        lst = []
-        if player > 2:
-            player = 1
-        for i in range(3):
-            for j in range(3):
-                if grid[i][j] == 0:
-                    grid[i][j] = player
-                    r = TicTacToe._check_winner(grid)
-                    # if its not -1 it means there is a winner or that the grid is full
-                    # if its -1 its going to call itself to try the sub moves
-                    if r != -1:
-                        lst.append(r)
-                    else:
-                        lst.extend(TicTacToe._hypotetical_moves(deepcopy(grid), player + 1))
-
-                    # clears the grid change, to test the next posibility
-                    grid[i][j] = 0
-        return lst
-
-    @staticmethod
-    def _is_grid_full(grid) -> bool:
-        for i in range(3):
-            for j in range(3):
-                if grid[i][j] == 0:
-                    return False
-
-        return True
-
+    # movement of a player
     def play_move(self, player: int, x: int, y: int) -> None:
         if self._game_ended or self._m[x][y] != 0:
             return
@@ -91,6 +62,27 @@ class TicTacToe:
         if r != -1:
             self._winner = r
             self._game_ended = True
+
+    def is_game_done(self) -> bool:
+        return self._game_ended
+
+    # returns: -1 -> game still going, 0 -> tie, 1 -> player won, 2 -> computer won
+    def get_winner(self) -> int:
+        return self._winner
+
+    def get_value(self, x: int, y: int) -> int:
+        if x not in range(3) or y not in range(3):
+            return -1
+        return self._m[x][y]
+
+    def reset(self):
+        self._m = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        self._game_ended = False
+        self._x_turn = True
+        self._winner = -1
+
+    def debug_print(self):
+        print(self._m)
 
     @staticmethod
     def _check_winner(m) -> int:
@@ -123,22 +115,32 @@ class TicTacToe:
             return 0
         return winner  # =-1
 
-    def is_game_done(self) -> bool:
-        return self._game_ended
+    @staticmethod
+    def _hypotetical_moves(grid, player: int) -> list:
+        lst = []
+        if player > 2:
+            player = 1
+        for i in range(3):
+            for j in range(3):
+                if grid[i][j] == 0:
+                    grid[i][j] = player
+                    r = TicTacToe._check_winner(grid)
+                    # if its not -1 it means there is a winner or that the grid is full
+                    # if its -1 its going to call itself to try the sub moves
+                    if r != -1:
+                        lst.append(r)
+                    else:
+                        lst.extend(TicTacToe._hypotetical_moves(deepcopy(grid), player + 1))
 
-    def get_winner(self) -> int:
-        return self._winner
+                    # clears the grid change, to test the next posibility
+                    grid[i][j] = 0
+        return lst
 
-    def get_value(self, x: int, y: int) -> int:
-        if x not in range(3) or y not in range(3):
-            return -1
-        return self._m[x][y]
+    @staticmethod
+    def _is_grid_full(grid) -> bool:
+        for i in range(3):
+            for j in range(3):
+                if grid[i][j] == 0:
+                    return False
 
-    def reset(self):
-        self._m = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-        self._game_ended = False
-        self._x_turn = True
-        self._winner = -1
-
-    def debug_print(self):
-        print(self._m)
+        return True
